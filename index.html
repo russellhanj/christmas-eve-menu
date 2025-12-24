@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Christmas Eve — Invitation</title>
+
   <style>
     :root{
       --bg0:#0b0c10;
@@ -11,12 +12,15 @@
       --ink:#f4f1ea;
       --muted:rgba(244,241,234,.74);
       --line:rgba(244,241,234,.18);
-      --gold:rgba(222, 193, 122, .95);
-      --shadow: 0 24px 80px rgba(0,0,0,.55);
-      --radius: 22px;
+      --gold:rgba(222,193,122,.95);
+      --goldSoft:rgba(222,193,122,.35);
+      --shadow:0 24px 80px rgba(0,0,0,.55);
+      --radius:22px;
     }
+
     *{box-sizing:border-box}
     html,body{height:100%}
+
     body{
       margin:0;
       font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
@@ -29,342 +33,358 @@
       overflow-x:hidden;
     }
 
-    /* Subtle animated grain */
+    /* Subtle grain */
     .grain{
-      position:fixed; inset:-40%;
-      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+      position:fixed;
+      inset:-40%;
+      pointer-events:none;
       opacity:.10;
       mix-blend-mode:overlay;
-      pointer-events:none;
-      transform:translate3d(0,0,0);
-      animation: drift 14s linear infinite;
-    }
-    @keyframes drift{
-      0%{transform:translate3d(-2%, -1%, 0) rotate(0deg)}
-      50%{transform:translate3d(2%, 1%, 0) rotate(1deg)}
-      100%{transform:translate3d(-2%, -1%, 0) rotate(0deg)}
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
     }
 
-    /* Screens */
     .stage{
       min-height:100%;
       display:grid;
       place-items:center;
-      padding: 28px 14px;            /* Mobile-first */
+      padding:24px 14px;
       position:relative;
     }
 
     .screen{
-      width: min(720px, 94vw);
-      position:absolute;
-      inset: 28px 14px;
-      margin:auto;
-      max-height: calc(100% - 56px);
-      display:grid;
-      place-items:center;
-      pointer-events:none;
-      opacity:0;
-      transform: translateY(12px) scale(.99);
-      transition: opacity .7s ease, transform .7s ease;
+      width:100%;
+      max-width:720px;
+      display:none;
     }
-    .screen.active{
-      pointer-events:auto;
-      opacity:1;
-      transform: translateY(0) scale(1);
-    }
+    .screen.active{display:block}
 
     .panel{
-      width: 100%;
-      border-radius: var(--radius);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: var(--shadow);
+      border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.10);
+      box-shadow:var(--shadow);
       position:relative;
       overflow:hidden;
-      transform-style:preserve-3d;
-      will-change: transform;
+      transform: translateZ(0);
     }
 
-    /* Gold frame */
     .panel::before{
       content:"";
-      position:absolute; inset:12px; /* tighter on mobile */
-      border-radius: calc(var(--radius) - 10px);
-      border: 1px solid rgba(222,193,122,.35);
-      box-shadow:
-        0 0 0 1px rgba(0,0,0,.35) inset,
-        0 0 40px rgba(222,193,122,.08);
+      position:absolute;
+      inset:12px;
+      border-radius:calc(var(--radius) - 10px);
+      border:1px solid rgba(222,193,122,.35);
       pointer-events:none;
     }
-    .panel::after{
-      content:"";
-      position:absolute; inset:-2px;
-      background:
-        radial-gradient(600px 300px at 30% 0%, rgba(222,193,122,.14), transparent 60%),
-        radial-gradient(520px 320px at 85% 10%, rgba(222,193,122,.08), transparent 55%),
-        radial-gradient(700px 520px at 70% 115%, rgba(255,255,255,.05), transparent 60%);
-      pointer-events:none;
-      opacity:.9;
-      transform:translateZ(-1px);
-    }
 
-    .inner{
-      padding: 30px 18px 26px; /* mobile-first padding */
-      position:relative;
-    }
+    .inner{padding:30px 18px 28px}
 
-    /* Header ornaments */
     .topline{
-      display:flex; align-items:center; gap:12px;
+      display:flex;
+      align-items:center;
+      gap:12px;
       justify-content:center;
-      margin-bottom: 14px;
+      margin-bottom:14px;
     }
     .rule{
-      height:1px; flex:1;
-      background: linear-gradient(90deg, transparent, var(--line), transparent);
-      max-width: 160px;
+      height:1px;
+      flex:1;
+      background:linear-gradient(90deg, transparent, var(--line), transparent);
+      max-width:160px;
     }
     .seal{
-      width: 34px; height: 34px;
+      width:34px;height:34px;
       border-radius:999px;
-      border: 1px solid rgba(222,193,122,.55);
+      border:1px solid rgba(222,193,122,.55);
       box-shadow: 0 0 0 6px rgba(222,193,122,.08);
-      position:relative;
-      flex: 0 0 auto;
-    }
-    .seal::before{
-      content:"";
-      position:absolute; inset:8px;
-      border-radius:999px;
-      border: 1px solid rgba(222,193,122,.40);
     }
 
-    /* Type */
     h1{
       text-align:center;
-      font-weight: 520;
-      letter-spacing: .14em;
-      font-size: clamp(22px, 5.2vw, 34px);
-      margin: 0 0 10px;
-      text-transform: uppercase;
-    }
-    .sub{
-      text-align:center;
-      color: var(--muted);
-      letter-spacing:.06em;
-      font-size: 13.5px;
-      margin: 0 auto 18px;
-      max-width: 46ch;
-      line-height: 1.6;
+      font-weight:520;
+      letter-spacing:.14em;
+      font-size:clamp(22px,5.2vw,34px);
+      margin:0 0 10px;
+      text-transform:uppercase;
     }
 
     .toLine{
       text-align:center;
-      font-size: 14px;
-      color: rgba(244,241,234,.86);
+      font-size:14px;
       letter-spacing:.08em;
-      margin: 6px 0 16px;
+      margin-bottom:16px;
     }
     .toLine .name{
       display:block;
-      margin-top: 8px;
-      font-size: 15px;
-      letter-spacing:.04em;
-      color: rgba(222,193,122,.95);
+      margin-top:8px;
+      color:var(--gold);
     }
 
-    /* Divider */
+    .sub{
+      text-align:center;
+      color:var(--muted);
+      font-size:13.5px;
+      line-height:1.6;
+      margin-bottom:18px;
+    }
+
     .dotline{
-      margin: 16px 0 12px;
       height:1px;
-      background: repeating-linear-gradient(
+      margin:16px 0;
+      background:repeating-linear-gradient(
         90deg,
-        rgba(222,193,122,.0),
-        rgba(222,193,122,.0) 10px,
+        transparent,
+        transparent 10px,
         rgba(222,193,122,.22) 10px,
         rgba(222,193,122,.22) 14px
       );
-      opacity:.85;
     }
 
-    /* Button */
-    .actions{
+    .footer{
+      margin-top:14px;
+      padding-top:12px;
+      border-top:1px solid rgba(255,255,255,.08);
       display:flex;
-      justify-content:center;
-      margin-top: 18px;
+      justify-content:space-between;
+      gap:12px;
+      font-size:12.5px;
+      flex-wrap:wrap;
+      color: rgba(244,241,234,.80);
     }
-    .btn{
-      appearance:none;
-      border: 1px solid rgba(222,193,122,.50);
-      background: rgba(222,193,122,.10);
-      color: var(--ink);
-      border-radius: 999px;
-      padding: 12px 16px;
-      font-size: 12px;
-      letter-spacing: .22em;
-      text-transform: uppercase;
-      cursor:pointer;
-      position:relative;
-      transition: transform .18s ease, background .18s ease, border-color .18s ease;
-      width: min(320px, 100%); /* mobile-friendly tap target */
-    }
-    .btn:hover{ transform: translateY(-1px); background: rgba(222,193,122,.14); border-color: rgba(222,193,122,.62); }
-    .btn:active{ transform: translateY(0px) scale(.99); }
-    .btn:focus-visible{ outline: 2px solid rgba(222,193,122,.55); outline-offset: 4px; }
 
-    /* Courses & drinks */
+    /* Buttons */
+    .actions{
+      display:grid;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .btn{
+      width:100%;
+      padding:12px 16px;
+      border-radius:999px;
+      font-size:12px;
+      letter-spacing:.22em;
+      text-transform:uppercase;
+      cursor:pointer;
+      transform: translateZ(0);
+      transition: transform .18s ease, background .18s ease, border-color .18s ease, opacity .18s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn.primary{
+      border:1px solid rgba(222,193,122,.60);
+      background:rgba(222,193,122,.14);
+      color:var(--ink);
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    .btn.secondary{
+      border:1px solid rgba(255,255,255,.18);
+      background:transparent;
+      color:rgba(244,241,234,.72);
+    }
+    .btn:active{transform:scale(.985)}
+    .btn[disabled]{opacity:.55; cursor:default}
+
+    /* Menu */
     .sectionTitle{
       text-align:center;
-      font-size: 12px;
+      font-size:12px;
       letter-spacing:.26em;
-      text-transform: uppercase;
-      color: rgba(222,193,122,.90);
-      margin: 2px 0 10px;
+      color:var(--gold);
+      margin-bottom:10px;
     }
 
-    .list{
-      display:grid;
-      gap: 12px;
-      margin-top: 8px;
-    }
+    .list{display:grid;gap:12px}
+
     .item{
-      padding: 14px 14px 13px;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: linear-gradient(180deg, rgba(18,21,29,.72), rgba(18,21,29,.45));
+      padding:14px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.08);
+      background:linear-gradient(180deg, rgba(18,21,29,.72), rgba(18,21,29,.45));
       position:relative;
       overflow:hidden;
     }
     .item::before{
       content:"";
-      position:absolute; inset:-40%;
+      position:absolute;
+      inset:-40%;
       background:
-        radial-gradient(300px 160px at 18% 20%, rgba(222,193,122,.14), transparent 55%),
-        radial-gradient(280px 220px at 85% 10%, rgba(255,255,255,.06), transparent 60%);
+        radial-gradient(280px 160px at 18% 20%, rgba(222,193,122,.14), transparent 55%),
+        radial-gradient(240px 200px at 85% 10%, rgba(255,255,255,.06), transparent 60%);
       transform: rotate(8deg);
       opacity:.9;
       pointer-events:none;
     }
-    .label{
-      display:flex; align-items:baseline; justify-content:space-between; gap: 10px;
-      position:relative;
-      flex-wrap:wrap;
-    }
-    .label .name{
-      font-size: 16px;
-      letter-spacing:.03em;
-      font-weight: 520;
-    }
-    .tag{
-      font-size: 11px;
-      letter-spacing:.18em;
-      text-transform: uppercase;
-      color: rgba(222,193,122,.92);
-      border: 1px solid rgba(222,193,122,.35);
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(222,193,122,.08);
-      white-space:nowrap;
-    }
-    .desc{
-      margin-top: 8px;
-      color: var(--muted);
-      font-size: 13.5px;
-      line-height: 1.45;
-      position:relative;
-    }
 
-    .footer{
+    .label{
       display:flex;
       justify-content:space-between;
-      align-items:center;
-      gap: 12px;
-      margin-top: 16px;
-      padding-top: 14px;
-      border-top: 1px solid rgba(255,255,255,.08);
-      color: rgba(244,241,234,.68);
-      font-size: 12.5px;
-      letter-spacing:.08em;
+      gap:10px;
       flex-wrap:wrap;
+      position:relative;
     }
-    .sig{display:flex; align-items:center; gap:10px;}
-    .spark{
-      width:10px; height:10px; border-radius:999px;
-      background: var(--gold);
-      box-shadow: 0 0 18px rgba(222,193,122,.45);
-      animation: pulse 2.6s ease-in-out infinite;
-    }
-    @keyframes pulse{
-      0%,100%{transform:scale(1); opacity:.9}
-      50%{transform:scale(1.22); opacity:.65}
+    .label .name{font-size:16px;font-weight:520}
+    .tag{font-size:11px;letter-spacing:.18em;color:var(--gold);text-transform:uppercase}
+    .desc{margin-top:6px;font-size:13.5px;color:var(--muted);position:relative}
+
+    @media (min-width:720px){
+      .inner{padding:46px 44px 40px}
+      .label .name{font-size:18px}
+      .desc{font-size:14px}
     }
 
-    /* Animations */
-    .invite .panel{
+    /* ========= Festival-inspired portal transition (mobile-friendly) ========= */
+    .portalOverlay{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
       opacity:0;
-      transform: translateY(14px);
-      animation: rise .9s ease forwards .15s;
+      z-index:9999;
+      display:grid;
+      place-items:center;
+      overflow:hidden;
     }
-    @keyframes rise{
+    .portalOverlay.on{
+      opacity:1;
+      pointer-events:auto;
+    }
+
+    /* soft vignette + glow */
+    .portalOverlay .veil{
+      position:absolute; inset:0;
+      background:
+        radial-gradient(800px 600px at 50% 45%, rgba(222,193,122,.22), transparent 60%),
+        radial-gradient(900px 700px at 50% 45%, rgba(164,110,255,.10), transparent 62%),
+        linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.85));
+      opacity:0;
+      animation: veilIn 1200ms ease forwards;
+    }
+    @keyframes veilIn{ to{opacity:1} }
+
+    /* expanding ring (portal) */
+    .portalOverlay .ring{
+      width: 22vmin;
+      height: 22vmin;
+      min-width: 140px;
+      min-height: 140px;
+      border-radius:999px;
+      border:1px solid rgba(222,193,122,.55);
+      box-shadow:
+        0 0 0 10px rgba(222,193,122,.10),
+        0 0 70px rgba(222,193,122,.18),
+        0 0 140px rgba(222,193,122,.12);
+      opacity:0;
+      transform: scale(.55);
+      animation: ringGrow 1200ms cubic-bezier(.2,.85,.2,1) forwards 120ms;
+    }
+    .portalOverlay .ring::before{
+      content:"";
+      position:absolute; inset:14%;
+      border-radius:999px;
+      border:1px solid rgba(222,193,122,.28);
+      filter: blur(.2px);
+    }
+    .portalOverlay .ring::after{
+      content:"";
+      position:absolute; inset:-35%;
+      border-radius:999px;
+      background: radial-gradient(circle at 50% 50%, rgba(222,193,122,.20), transparent 60%);
+      filter: blur(10px);
+      opacity:.9;
+    }
+    @keyframes ringGrow{
+      0%{opacity:0; transform:scale(.55)}
+      35%{opacity:1}
+      100%{opacity:1; transform:scale(7.2)}
+    }
+
+    /* sparkles */
+    .portalOverlay .sparks{
+      position:absolute;
+      inset:-10%;
+      opacity:0;
+      animation: sparksIn 900ms ease forwards 200ms;
+    }
+    @keyframes sparksIn{ to{opacity:1} }
+
+    .spark{
+      position:absolute;
+      width:6px;height:6px;border-radius:999px;
+      background: rgba(222,193,122,.95);
+      box-shadow: 0 0 16px rgba(222,193,122,.55);
+      animation: floatUp 1100ms ease-in forwards;
+      opacity:.95;
+    }
+    @keyframes floatUp{
+      0%{ transform: translate3d(0, 18px, 0) scale(.8); opacity:0 }
+      20%{ opacity:1 }
+      100%{ transform: translate3d(0, -140px, 0) scale(1.25); opacity:0 }
+    }
+
+    /* Center text */
+    .portalOverlay .caption{
+      position:relative;
+      text-align:center;
+      padding: 0 18px;
+      opacity:0;
+      transform: translateY(10px);
+      animation: captionIn 900ms ease forwards 260ms;
+    }
+    @keyframes captionIn{
       to{opacity:1; transform: translateY(0)}
     }
-
-    .menuReveal .panel{
-      opacity:0;
-      transform: translateY(18px) scale(.985);
-      animation: reveal .9s cubic-bezier(.2,.8,.2,1) forwards .08s;
+    .portalOverlay .caption .small{
+      font-size:12px;
+      letter-spacing:.28em;
+      text-transform:uppercase;
+      color: rgba(244,241,234,.78);
+      margin-bottom: 10px;
     }
-    @keyframes reveal{
-      to{opacity:1; transform: translateY(0) scale(1)}
-    }
-
-    .menuReveal .item{opacity:0; transform: translateY(14px); filter: blur(2px);}
-    .menuReveal .item:nth-child(1){animation: cardIn .85s ease forwards .28s}
-    .menuReveal .item:nth-child(2){animation: cardIn .85s ease forwards .40s}
-    .menuReveal .item:nth-child(3){animation: cardIn .85s ease forwards .52s}
-    .menuReveal .item:nth-child(4){animation: cardIn .85s ease forwards .64s}
-    .menuReveal .drinks .item:nth-child(1){animation-delay: .82s}
-    .menuReveal .drinks .item:nth-child(2){animation-delay: .94s}
-    .menuReveal .drinks .item:nth-child(3){animation-delay: 1.06s}
-    @keyframes cardIn{
-      to{opacity:1; transform: translateY(0); filter: blur(0)}
+    .portalOverlay .caption .big{
+      font-size: clamp(18px, 4.6vw, 26px);
+      letter-spacing:.10em;
+      color: rgba(222,193,122,.96);
+      text-transform: uppercase;
     }
 
-    /* Larger screens */
-    @media (min-width: 720px){
-      .stage{padding: 48px 18px;}
-      .screen{inset: 48px 18px; max-height: calc(100% - 96px);}
-      .panel::before{inset:14px;}
-      .inner{padding: 46px 44px 40px;}
-      .rule{max-width: 240px;}
-      .label .name{font-size:18px;}
-      .desc{font-size:14px;}
-      .sub{font-size:14px;}
+    /* Screen swap: fade out invitation content quickly */
+    .fadeOutFast{
+      animation: fadeOutFast 420ms ease forwards;
+    }
+    @keyframes fadeOutFast{
+      to{opacity:0; transform: translateY(-6px); filter: blur(2px)}
     }
 
     /* Reduced motion */
     @media (prefers-reduced-motion: reduce){
-      .grain{animation:none}
-      .spark{animation:none}
-      .screen{transition:none}
-      .invite .panel, .menuReveal .panel, .menuReveal .item{animation:none; opacity:1; transform:none; filter:none}
+      .portalOverlay{display:none !important}
     }
   </style>
 </head>
 
 <body>
-  <div class="grain" aria-hidden="true"></div>
+  <div class="grain"></div>
 
-  <main class="stage" aria-live="polite">
-    <!-- INVITATION SCREEN -->
-    <section class="screen invite active" id="inviteScreen" aria-label="Invitation">
-      <div class="panel">
-        <div class="inner">
-          <div class="topline">
-            <div class="rule"></div>
-            <div class="seal" aria-hidden="true"></div>
-            <div class="rule"></div>
-          </div>
+  <!-- Portal transition overlay -->
+  <div class="portalOverlay" id="portal" aria-hidden="true">
+    <div class="veil"></div>
+    <div class="sparks" id="sparks"></div>
+    <div class="ring"></div>
+    <div class="caption">
+      <div class="small">Invitation Accepted</div>
+      <div class="big">Welcome to Tonight’s Menu</div>
+    </div>
+  </div>
+
+  <main class="stage">
+
+    <!-- INVITATION -->
+    <section class="screen active" id="inviteScreen">
+      <div class="panel" id="invitePanel">
+        <div class="inner" id="inviteInner">
+          <div class="topline"><div class="rule"></div><div class="seal"></div><div class="rule"></div></div>
 
           <h1>Invitation</h1>
 
@@ -374,180 +394,140 @@
           </div>
 
           <div class="sub">
-            You are warmly invited to an intimate Christmas Eve dinner.<br/>
-            A quiet, fine-dining experience—at home.
+            You are warmly invited to an intimate Christmas Eve dinner.<br>
+            A quiet, fine-dining experience — at home.
           </div>
 
-          <div class="dotline" aria-hidden="true"></div>
+          <div class="dotline"></div>
 
-          <div class="footer" style="border-top:none; padding-top:0; margin-top:0;">
-            <div class="sig">
-              <span class="spark" aria-hidden="true"></span>
-              <span>Dinner starts at <strong>6:30 PM</strong></span>
-            </div>
+          <div class="footer">
+            <div>Dinner starts at <strong>6:30 PM</strong></div>
             <div>Dress code: Cozy</div>
           </div>
 
           <div class="actions">
-            <button class="btn" id="openMenuBtn" type="button" aria-label="Open the menu">
-              Open Menu
-            </button>
+            <button class="btn primary" id="acceptBtn">Accept Invitation</button>
+            <button class="btn secondary" id="declineBtn">Decline</button>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- MENU SCREEN -->
-    <section class="screen menuReveal" id="menuScreen" aria-label="Menu">
+    <!-- MENU -->
+    <section class="screen" id="menuScreen">
       <div class="panel" id="menuPanel">
         <div class="inner">
-          <div class="topline">
-            <div class="rule"></div>
-            <div class="seal" aria-hidden="true"></div>
-            <div class="rule"></div>
-          </div>
-
+          <div class="topline"><div class="rule"></div><div class="seal"></div><div class="rule"></div></div>
           <h1>Christmas Eve Menu</h1>
           <div class="sub">Fine dining at home • Prepared with care</div>
 
           <div class="sectionTitle">Courses</div>
-          <div class="list courses" aria-label="Menu items">
-            <article class="item">
-              <div class="label">
-                <div class="name">Pan-Seared Steak</div>
-                <div class="tag">Main</div>
-              </div>
-              <div class="desc">
-                Butter-basted with rosemary, finished tableside with chimichurri.
-              </div>
-            </article>
-
-            <article class="item">
-              <div class="label">
-                <div class="name">Seared Salmon</div>
-                <div class="tag">Main</div>
-              </div>
-              <div class="desc">
-                Gently cooked for a tender, flaky finish—simple, clean, and comforting.
-              </div>
-            </article>
-
-            <article class="item">
-              <div class="label">
-                <div class="name">Mashed Potatoes &amp; Gravy</div>
-                <div class="tag">Side</div>
-              </div>
-              <div class="desc">
-                Rustic-chunky Yukon Gold mash, served warm with silky beef gravy.
-              </div>
-            </article>
-
-            <article class="item">
-              <div class="label">
-                <div class="name">Roasted Vegetables</div>
-                <div class="tag">Side</div>
-              </div>
-              <div class="desc">
-                Bunched carrots, broccolini, and king oyster mushrooms—caramelized and tender.
-              </div>
-            </article>
+          <div class="list">
+            <div class="item">
+              <div class="label"><span class="name">Pan-Seared Striploin Steak</span><span class="tag">Main</span></div>
+              <div class="desc">Butter-basted with rosemary, finished with chimichurri.</div>
+            </div>
+            <div class="item">
+              <div class="label"><span class="name">Seared Salmon</span><span class="tag">Main</span></div>
+              <div class="desc">Gently cooked, tender and flaky.</div>
+            </div>
+            <div class="item">
+              <div class="label"><span class="name">Mashed Potatoes &amp; Gravy</span><span class="tag">Side</span></div>
+              <div class="desc">Creamy Yukon Gold with silky beef gravy.</div>
+            </div>
+            <div class="item">
+              <div class="label"><span class="name">Roasted Vegetables</span><span class="tag">Side</span></div>
+              <div class="desc">Carrots, broccolini, king oyster mushrooms.</div>
+            </div>
           </div>
 
-          <div class="dotline" aria-hidden="true"></div>
+          <div class="dotline"></div>
 
           <div class="sectionTitle">Drink Menu</div>
-          <div class="list drinks" aria-label="Drink menu">
-            <article class="item">
-              <div class="label">
-                <div class="name">Orange Juice</div>
-                <div class="tag">Non-Alcoholic</div>
-              </div>
-              <div class="desc">Chilled and bright.</div>
-            </article>
-
-            <article class="item">
-              <div class="label">
-                <div class="name">Mogu Mogu</div>
-                <div class="tag">Non-Alcoholic</div>
-              </div>
-              <div class="desc">Fun, refreshing, and cozy.</div>
-            </article>
-
-            <article class="item">
-              <div class="label">
-                <div class="name">Red Wine</div>
-                <div class="tag">Wine</div>
-              </div>
-              <div class="desc">Chaberton Red 2022.</div>
-            </article>
+          <div class="list">
+            <div class="item"><div class="label"><span class="name">Orange Juice</span><span class="tag">Non-Alcoholic</span></div><div class="desc">Chilled and bright.</div></div>
+            <div class="item"><div class="label"><span class="name">Mogu Mogu</span><span class="tag">Non-Alcoholic</span></div><div class="desc">Fun, refreshing, and cozy.</div></div>
+            <div class="item"><div class="label"><span class="name">Red Wine</span><span class="tag">Wine</span></div><div class="desc">Chaberton Red 2022.</div></div>
           </div>
 
-          <div class="dotline" aria-hidden="true"></div>
+          <div class="dotline"></div>
 
           <div class="footer">
-            <div class="sig">
-              <span class="spark" aria-hidden="true"></span>
-              <span>Prepared by Russell Han Josef</span>
-            </div>
+            <div>Prepared by Chef Russell</div>
             <div>Enjoy your evening ✨</div>
           </div>
         </div>
       </div>
     </section>
+
   </main>
 
   <script>
-    // Screen transition: Invitation -> Menu
-    (function(){
-      const invite = document.getElementById("inviteScreen");
-      const menu = document.getElementById("menuScreen");
-      const btn = document.getElementById("openMenuBtn");
+    const acceptBtn = document.getElementById("acceptBtn");
+    const declineBtn = document.getElementById("declineBtn");
+    const inviteScreen = document.getElementById("inviteScreen");
+    const menuScreen = document.getElementById("menuScreen");
+    const inviteInner = document.getElementById("inviteInner");
+    const portal = document.getElementById("portal");
+    const sparks = document.getElementById("sparks");
 
-      if (!invite || !menu || !btn) return;
+    function spawnSparks(count = 26) {
+      sparks.innerHTML = "";
+      for (let i = 0; i < count; i++) {
+        const s = document.createElement("div");
+        s.className = "spark";
+        const left = Math.random() * 100;
+        const top = 55 + Math.random() * 45; // concentrate lower half for “rising” feel
+        const delay = Math.random() * 260;
+        const dur = 900 + Math.random() * 500;
+        const size = 4 + Math.random() * 6;
 
-      btn.addEventListener("click", () => {
-        invite.classList.remove("active");
-        menu.classList.add("active");
-        const panel = document.getElementById("menuPanel");
-        if (panel) {
-          panel.setAttribute("tabindex", "-1");
-          panel.focus({preventScroll:true});
-        }
-      });
-    })();
-
-    // Gentle 3D tilt on the menu panel (desktop only-ish)
-    (function () {
-      const panel = document.getElementById("menuPanel");
-      const mqReduce = window.matchMedia("(prefers-reduced-motion: reduce)");
-      const mqFine = window.matchMedia("(hover: hover) and (pointer: fine)");
-      if (!panel || mqReduce.matches || !mqFine.matches) return;
-
-      let raf = null;
-
-      function onMove(e) {
-        const rect = panel.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width;
-        const y = (e.clientY - rect.top) / rect.height;
-
-        const rotateY = (x - 0.5) * 10;
-        const rotateX = (0.5 - y) * 8;
-
-        if (raf) cancelAnimationFrame(raf);
-        raf = requestAnimationFrame(() => {
-          panel.style.transform =
-            `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(0)`;
-        });
+        s.style.left = left + "%";
+        s.style.top = top + "%";
+        s.style.width = size + "px";
+        s.style.height = size + "px";
+        s.style.animationDelay = delay + "ms";
+        s.style.animationDuration = dur + "ms";
+        sparks.appendChild(s);
       }
+    }
 
-      function reset() {
-        if (raf) cancelAnimationFrame(raf);
-        panel.style.transform = `perspective(900px) rotateX(0deg) rotateY(0deg)`;
-      }
+    declineBtn.onclick = () => {
+      alert("Sorry, you still have to accept this invitation.");
+    };
 
-      panel.addEventListener("mousemove", onMove);
-      panel.addEventListener("mouseleave", reset);
-    })();
+    acceptBtn.onclick = () => {
+      // Lock buttons
+      acceptBtn.disabled = true;
+      declineBtn.disabled = true;
+
+      // Fast fade the invitation content
+      inviteInner.classList.add("fadeOutFast");
+
+      // Start portal overlay
+      spawnSparks(30);
+      portal.classList.add("on");
+
+      // Swap screens after the “portal” grows
+      // (timed to ringGrow: 1200ms)
+      setTimeout(() => {
+        inviteScreen.classList.remove("active");
+        menuScreen.classList.add("active");
+        window.scrollTo({ top: 0, behavior: "instant" });
+
+        // Remove overlay shortly after menu appears
+        setTimeout(() => {
+          portal.classList.remove("on");
+          // reset invitation for refresh / back button scenarios
+          acceptBtn.disabled = false;
+          declineBtn.disabled = false;
+          inviteInner.classList.remove("fadeOutFast");
+        }, 420);
+      }, 980);
+    };
+
+    // iOS Safari doesn’t support behavior:"instant" reliably; fallback
+    try { window.scrollTo({ top: 0, behavior: "instant" }); } catch(e) {}
   </script>
 </body>
 </html>
