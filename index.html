@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Christmas Eve — Invitation</title>
+  <style>
+    :root{
+      --bg0:#0b0c10;
+      --bg1:#0f1116;
+      --ink:#f4f1ea;
+      --muted:rgba(244,241,234,.74);
+      --line:rgba(244,241,234,.18);
+      --gold:rgba(222, 193, 122, .95);
+      --shadow: 0 24px 80px rgba(0,0,0,.55);
+      --radius: 22px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 900px at 10% 10%, rgba(222,193,122,.10), transparent 55%),
+        radial-gradient(900px 700px at 85% 20%, rgba(164,110,255,.08), transparent 55%),
+        radial-gradient(1100px 900px at 70% 85%, rgba(36,196,255,.06), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+    }
+
+    /* Subtle animated grain */
+    .grain{
+      position:fixed; inset:-40%;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+      opacity:.10;
+      mix-blend-mode:overlay;
+      pointer-events:none;
+      transform:translate3d(0,0,0);
+      animation: drift 14s linear infinite;
+    }
+    @keyframes drift{
+      0%{transform:translate3d(-2%, -1%, 0) rotate(0deg)}
+      50%{transform:translate3d(2%, 1%, 0) rotate(1deg)}
+      100%{transform:translate3d(-2%, -1%, 0) rotate(0deg)}
+    }
+
+    /* Screens */
+    .stage{
+      min-height:100%;
+      display:grid;
+      place-items:center;
+      padding: 28px 14px;            /* Mobile-first */
+      position:relative;
+    }
+
+    .screen{
+      width: min(720px, 94vw);
+      position:absolute;
+      inset: 28px 14px;
+      margin:auto;
+      max-height: calc(100% - 56px);
+      display:grid;
+      place-items:center;
+      pointer-events:none;
+      opacity:0;
+      transform: translateY(12px) scale(.99);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .screen.active{
+      pointer-events:auto;
+      opacity:1;
+      transform: translateY(0) scale(1);
+    }
+
+    .panel{
+      width: 100%;
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+      transform-style:preserve-3d;
+      will-change: transform;
+    }
+
+    /* Gold frame */
+    .panel::before{
+      content:"";
+      position:absolute; inset:12px; /* tighter on mobile */
+      border-radius: calc(var(--radius) - 10px);
+      border: 1px solid rgba(222,193,122,.35);
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,.35) inset,
+        0 0 40px rgba(222,193,122,.08);
+      pointer-events:none;
+    }
+    .panel::after{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(600px 300px at 30% 0%, rgba(222,193,122,.14), transparent 60%),
+        radial-gradient(520px 320px at 85% 10%, rgba(222,193,122,.08), transparent 55%),
+        radial-gradient(700px 520px at 70% 115%, rgba(255,255,255,.05), transparent 60%);
+      pointer-events:none;
+      opacity:.9;
+      transform:translateZ(-1px);
+    }
+
+    .inner{
+      padding: 30px 18px 26px; /* mobile-first padding */
+      position:relative;
+    }
+
+    /* Header ornaments */
+    .topline{
+      display:flex; align-items:center; gap:12px;
+      justify-content:center;
+      margin-bottom: 14px;
+    }
+    .rule{
+      height:1px; flex:1;
+      background: linear-gradient(90deg, transparent, var(--line), transparent);
+      max-width: 160px;
+    }
+    .seal{
+      width: 34px; height: 34px;
+      border-radius:999px;
+      border: 1px solid rgba(222,193,122,.55);
+      box-shadow: 0 0 0 6px rgba(222,193,122,.08);
+      position:relative;
+      flex: 0 0 auto;
+    }
+    .seal::before{
+      content:"";
+      position:absolute; inset:8px;
+      border-radius:999px;
+      border: 1px solid rgba(222,193,122,.40);
+    }
+
+    /* Type */
+    h1{
+      text-align:center;
+      font-weight: 520;
+      letter-spacing: .14em;
+      font-size: clamp(22px, 5.2vw, 34px);
+      margin: 0 0 10px;
+      text-transform: uppercase;
+    }
+    .sub{
+      text-align:center;
+      color: var(--muted);
+      letter-spacing:.06em;
+      font-size: 13.5px;
+      margin: 0 auto 18px;
+      max-width: 46ch;
+      line-height: 1.6;
+    }
+
+    .toLine{
+      text-align:center;
+      font-size: 14px;
+      color: rgba(244,241,234,.86);
+      letter-spacing:.08em;
+      margin: 6px 0 16px;
+    }
+    .toLine .name{
+      display:block;
+      margin-top: 8px;
+      font-size: 15px;
+      letter-spacing:.04em;
+      color: rgba(222,193,122,.95);
+    }
+
+    /* Divider */
+    .dotline{
+      margin: 16px 0 12px;
+      height:1px;
+      background: repeating-linear-gradient(
+        90deg,
+        rgba(222,193,122,.0),
+        rgba(222,193,122,.0) 10px,
+        rgba(222,193,122,.22) 10px,
+        rgba(222,193,122,.22) 14px
+      );
+      opacity:.85;
+    }
+
+    /* Button */
+    .actions{
+      display:flex;
+      justify-content:center;
+      margin-top: 18px;
+    }
+    .btn{
+      appearance:none;
+      border: 1px solid rgba(222,193,122,.50);
+      background: rgba(222,193,122,.10);
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 12px 16px;
+      font-size: 12px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      cursor:pointer;
+      position:relative;
+      transition: transform .18s ease, background .18s ease, border-color .18s ease;
+      width: min(320px, 100%); /* mobile-friendly tap target */
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(222,193,122,.14); border-color: rgba(222,193,122,.62); }
+    .btn:active{ transform: translateY(0px) scale(.99); }
+    .btn:focus-visible{ outline: 2px solid rgba(222,193,122,.55); outline-offset: 4px; }
+
+    /* Courses & drinks */
+    .sectionTitle{
+      text-align:center;
+      font-size: 12px;
+      letter-spacing:.26em;
+      text-transform: uppercase;
+      color: rgba(222,193,122,.90);
+      margin: 2px 0 10px;
+    }
+
+    .list{
+      display:grid;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .item{
+      padding: 14px 14px 13px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: linear-gradient(180deg, rgba(18,21,29,.72), rgba(18,21,29,.45));
+      position:relative;
+      overflow:hidden;
+    }
+    .item::before{
+      content:"";
+      position:absolute; inset:-40%;
+      background:
+        radial-gradient(300px 160px at 18% 20%, rgba(222,193,122,.14), transparent 55%),
+        radial-gradient(280px 220px at 85% 10%, rgba(255,255,255,.06), transparent 60%);
+      transform: rotate(8deg);
+      opacity:.9;
+      pointer-events:none;
+    }
+    .label{
+      display:flex; align-items:baseline; justify-content:space-between; gap: 10px;
+      position:relative;
+      flex-wrap:wrap;
+    }
+    .label .name{
+      font-size: 16px;
+      letter-spacing:.03em;
+      font-weight: 520;
+    }
+    .tag{
+      font-size: 11px;
+      letter-spacing:.18em;
+      text-transform: uppercase;
+      color: rgba(222,193,122,.92);
+      border: 1px solid rgba(222,193,122,.35);
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(222,193,122,.08);
+      white-space:nowrap;
+    }
+    .desc{
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13.5px;
+      line-height: 1.45;
+      position:relative;
+    }
+
+    .footer{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap: 12px;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      color: rgba(244,241,234,.68);
+      font-size: 12.5px;
+      letter-spacing:.08em;
+      flex-wrap:wrap;
+    }
+    .sig{display:flex; align-items:center; gap:10px;}
+    .spark{
+      width:10px; height:10px; border-radius:999px;
+      background: var(--gold);
+      box-shadow: 0 0 18px rgba(222,193,122,.45);
+      animation: pulse 2.6s ease-in-out infinite;
+    }
+    @keyframes pulse{
+      0%,100%{transform:scale(1); opacity:.9}
+      50%{transform:scale(1.22); opacity:.65}
+    }
+
+    /* Animations */
+    .invite .panel{
+      opacity:0;
+      transform: translateY(14px);
+      animation: rise .9s ease forwards .15s;
+    }
+    @keyframes rise{
+      to{opacity:1; transform: translateY(0)}
+    }
+
+    .menuReveal .panel{
+      opacity:0;
+      transform: translateY(18px) scale(.985);
+      animation: reveal .9s cubic-bezier(.2,.8,.2,1) forwards .08s;
+    }
+    @keyframes reveal{
+      to{opacity:1; transform: translateY(0) scale(1)}
+    }
+
+    .menuReveal .item{opacity:0; transform: translateY(14px); filter: blur(2px);}
+    .menuReveal .item:nth-child(1){animation: cardIn .85s ease forwards .28s}
+    .menuReveal .item:nth-child(2){animation: cardIn .85s ease forwards .40s}
+    .menuReveal .item:nth-child(3){animation: cardIn .85s ease forwards .52s}
+    .menuReveal .item:nth-child(4){animation: cardIn .85s ease forwards .64s}
+    .menuReveal .drinks .item:nth-child(1){animation-delay: .82s}
+    .menuReveal .drinks .item:nth-child(2){animation-delay: .94s}
+    .menuReveal .drinks .item:nth-child(3){animation-delay: 1.06s}
+    @keyframes cardIn{
+      to{opacity:1; transform: translateY(0); filter: blur(0)}
+    }
+
+    /* Larger screens */
+    @media (min-width: 720px){
+      .stage{padding: 48px 18px;}
+      .screen{inset: 48px 18px; max-height: calc(100% - 96px);}
+      .panel::before{inset:14px;}
+      .inner{padding: 46px 44px 40px;}
+      .rule{max-width: 240px;}
+      .label .name{font-size:18px;}
+      .desc{font-size:14px;}
+      .sub{font-size:14px;}
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .grain{animation:none}
+      .spark{animation:none}
+      .screen{transition:none}
+      .invite .panel, .menuReveal .panel, .menuReveal .item{animation:none; opacity:1; transform:none; filter:none}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <main class="stage" aria-live="polite">
+    <!-- INVITATION SCREEN -->
+    <section class="screen invite active" id="inviteScreen" aria-label="Invitation">
+      <div class="panel">
+        <div class="inner">
+          <div class="topline">
+            <div class="rule"></div>
+            <div class="seal" aria-hidden="true"></div>
+            <div class="rule"></div>
+          </div>
+
+          <h1>Invitation</h1>
+
+          <div class="toLine">
+            To my Beloved
+            <span class="name">Pearlyn Phirada Sinthuwanichsaid</span>
+          </div>
+
+          <div class="sub">
+            You are warmly invited to an intimate Christmas Eve dinner.<br/>
+            A quiet, fine-dining experience—at home.
+          </div>
+
+          <div class="dotline" aria-hidden="true"></div>
+
+          <div class="footer" style="border-top:none; padding-top:0; margin-top:0;">
+            <div class="sig">
+              <span class="spark" aria-hidden="true"></span>
+              <span>Dinner starts at <strong>6:30 PM</strong></span>
+            </div>
+            <div>Dress code: Cozy</div>
+          </div>
+
+          <div class="actions">
+            <button class="btn" id="openMenuBtn" type="button" aria-label="Open the menu">
+              Open Menu
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MENU SCREEN -->
+    <section class="screen menuReveal" id="menuScreen" aria-label="Menu">
+      <div class="panel" id="menuPanel">
+        <div class="inner">
+          <div class="topline">
+            <div class="rule"></div>
+            <div class="seal" aria-hidden="true"></div>
+            <div class="rule"></div>
+          </div>
+
+          <h1>Christmas Eve Menu</h1>
+          <div class="sub">Fine dining at home • Prepared with care</div>
+
+          <div class="sectionTitle">Courses</div>
+          <div class="list courses" aria-label="Menu items">
+            <article class="item">
+              <div class="label">
+                <div class="name">Pan-Seared Steak</div>
+                <div class="tag">Main</div>
+              </div>
+              <div class="desc">
+                Butter-basted with rosemary, finished tableside with chimichurri.
+              </div>
+            </article>
+
+            <article class="item">
+              <div class="label">
+                <div class="name">Seared Salmon</div>
+                <div class="tag">Main</div>
+              </div>
+              <div class="desc">
+                Gently cooked for a tender, flaky finish—simple, clean, and comforting.
+              </div>
+            </article>
+
+            <article class="item">
+              <div class="label">
+                <div class="name">Mashed Potatoes &amp; Gravy</div>
+                <div class="tag">Side</div>
+              </div>
+              <div class="desc">
+                Rustic-chunky Yukon Gold mash, served warm with silky beef gravy.
+              </div>
+            </article>
+
+            <article class="item">
+              <div class="label">
+                <div class="name">Roasted Vegetables</div>
+                <div class="tag">Side</div>
+              </div>
+              <div class="desc">
+                Bunched carrots, broccolini, and king oyster mushrooms—caramelized and tender.
+              </div>
+            </article>
+          </div>
+
+          <div class="dotline" aria-hidden="true"></div>
+
+          <div class="sectionTitle">Drink Menu</div>
+          <div class="list drinks" aria-label="Drink menu">
+            <article class="item">
+              <div class="label">
+                <div class="name">Orange Juice</div>
+                <div class="tag">Non-Alcoholic</div>
+              </div>
+              <div class="desc">Chilled and bright.</div>
+            </article>
+
+            <article class="item">
+              <div class="label">
+                <div class="name">Mogu Mogu</div>
+                <div class="tag">Non-Alcoholic</div>
+              </div>
+              <div class="desc">Fun, refreshing, and cozy.</div>
+            </article>
+
+            <article class="item">
+              <div class="label">
+                <div class="name">Red Wine</div>
+                <div class="tag">Wine</div>
+              </div>
+              <div class="desc">Chaberton Red 2022.</div>
+            </article>
+          </div>
+
+          <div class="dotline" aria-hidden="true"></div>
+
+          <div class="footer">
+            <div class="sig">
+              <span class="spark" aria-hidden="true"></span>
+              <span>Prepared by Russell Han Josef</span>
+            </div>
+            <div>Enjoy your evening ✨</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Screen transition: Invitation -> Menu
+    (function(){
+      const invite = document.getElementById("inviteScreen");
+      const menu = document.getElementById("menuScreen");
+      const btn = document.getElementById("openMenuBtn");
+
+      if (!invite || !menu || !btn) return;
+
+      btn.addEventListener("click", () => {
+        invite.classList.remove("active");
+        menu.classList.add("active");
+        const panel = document.getElementById("menuPanel");
+        if (panel) {
+          panel.setAttribute("tabindex", "-1");
+          panel.focus({preventScroll:true});
+        }
+      });
+    })();
+
+    // Gentle 3D tilt on the menu panel (desktop only-ish)
+    (function () {
+      const panel = document.getElementById("menuPanel");
+      const mqReduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const mqFine = window.matchMedia("(hover: hover) and (pointer: fine)");
+      if (!panel || mqReduce.matches || !mqFine.matches) return;
+
+      let raf = null;
+
+      function onMove(e) {
+        const rect = panel.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width;
+        const y = (e.clientY - rect.top) / rect.height;
+
+        const rotateY = (x - 0.5) * 10;
+        const rotateX = (0.5 - y) * 8;
+
+        if (raf) cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          panel.style.transform =
+            `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(0)`;
+        });
+      }
+
+      function reset() {
+        if (raf) cancelAnimationFrame(raf);
+        panel.style.transform = `perspective(900px) rotateX(0deg) rotateY(0deg)`;
+      }
+
+      panel.addEventListener("mousemove", onMove);
+      panel.addEventListener("mouseleave", reset);
+    })();
+  </script>
+</body>
+</html>
