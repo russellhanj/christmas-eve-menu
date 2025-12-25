@@ -13,14 +13,12 @@
       --muted:rgba(244,241,234,.74);
       --line:rgba(244,241,234,.18);
       --gold:rgba(222,193,122,.95);
-      --goldSoft:rgba(222,193,122,.35);
       --shadow:0 24px 80px rgba(0,0,0,.55);
       --radius:22px;
     }
 
     *{box-sizing:border-box}
     html,body{height:100%}
-
     body{
       margin:0;
       font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
@@ -33,7 +31,6 @@
       overflow-x:hidden;
     }
 
-    /* Subtle grain */
     .grain{
       position:fixed;
       inset:-40%;
@@ -67,7 +64,6 @@
       overflow:hidden;
       transform: translateZ(0);
     }
-
     .panel::before{
       content:"";
       position:absolute;
@@ -152,7 +148,6 @@
       color: rgba(244,241,234,.80);
     }
 
-    /* Buttons */
     .actions{
       display:grid;
       gap:10px;
@@ -172,7 +167,6 @@
       user-select:none;
       -webkit-tap-highlight-color: transparent;
     }
-
     .btn.primary{
       border:1px solid rgba(222,193,122,.60);
       background:rgba(222,193,122,.14);
@@ -184,8 +178,50 @@
       background:transparent;
       color:rgba(244,241,234,.72);
     }
+    .btn.tertiary{
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.04);
+      color:rgba(244,241,234,.82);
+    }
     .btn:active{transform:scale(.985)}
     .btn[disabled]{opacity:.55; cursor:default}
+
+    /* Input */
+    .field{
+      display:grid;
+      gap:10px;
+      margin-top: 12px;
+    }
+    .input{
+      width:100%;
+      padding:14px 14px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.18);
+      color: var(--ink);
+      font-size: 14px;
+      letter-spacing:.08em;
+      outline:none;
+    }
+    .input:focus{
+      border-color: rgba(222,193,122,.45);
+      box-shadow: 0 0 0 4px rgba(222,193,122,.12);
+    }
+    .helper{
+      text-align:center;
+      color: rgba(244,241,234,.70);
+      font-size: 12.5px;
+      line-height:1.5;
+      margin-top: 6px;
+    }
+    .error{
+      text-align:center;
+      color: rgba(255,180,180,.95);
+      font-size: 12.5px;
+      margin-top: 10px;
+      display:none;
+    }
+    .error.show{display:block}
 
     /* Menu */
     .sectionTitle{
@@ -195,9 +231,7 @@
       color:var(--gold);
       margin-bottom:10px;
     }
-
     .list{display:grid;gap:12px}
-
     .item{
       padding:14px;
       border-radius:16px;
@@ -217,7 +251,6 @@
       opacity:.9;
       pointer-events:none;
     }
-
     .label{
       display:flex;
       justify-content:space-between;
@@ -235,7 +268,7 @@
       .desc{font-size:14px}
     }
 
-    /* ========= Festival-inspired portal transition (mobile-friendly) ========= */
+    /* ========= Portal transition ========= */
     .portalOverlay{
       position:fixed;
       inset:0;
@@ -250,7 +283,6 @@
       opacity:1;
       pointer-events:auto;
     }
-
     .portalOverlay .veil{
       position:absolute; inset:0;
       background:
@@ -328,9 +360,7 @@
       transform: translateY(10px);
       animation: captionIn 900ms ease forwards 260ms;
     }
-    @keyframes captionIn{
-      to{opacity:1; transform: translateY(0)}
-    }
+    @keyframes captionIn{ to{opacity:1; transform: translateY(0)} }
     .portalOverlay .caption .small{
       font-size:12px;
       letter-spacing:.28em;
@@ -374,7 +404,7 @@
 
     <!-- INVITATION -->
     <section class="screen active" id="inviteScreen">
-      <div class="panel" id="invitePanel">
+      <div class="panel">
         <div class="inner" id="inviteInner">
           <div class="topline"><div class="rule"></div><div class="seal"></div><div class="rule"></div></div>
 
@@ -401,6 +431,31 @@
             <button class="btn primary" id="acceptBtn">Accept Invitation</button>
             <button class="btn secondary" id="declineBtn">Decline</button>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CODE SCREEN -->
+    <section class="screen" id="codeScreen">
+      <div class="panel">
+        <div class="inner">
+          <div class="topline"><div class="rule"></div><div class="seal"></div><div class="rule"></div></div>
+
+          <h1>Private Access</h1>
+
+          <div class="sub">
+            This menu will only be available at <strong>6:30 PM</strong>.<br>
+            If you are the host, enter the access code to view it early.
+          </div>
+
+          <div class="field">
+            <input class="input" id="codeInput" type="password" inputmode="text" placeholder="Enter access code" autocomplete="one-time-code" />
+            <button class="btn primary" id="unlockBtn">Unlock Menu</button>
+            <button class="btn tertiary" id="backBtn">Back</button>
+          </div>
+
+          <div class="helper">Tip: try again if you mistype.</div>
+          <div class="error" id="codeError">Incorrect code. Please try again.</div>
         </div>
       </div>
     </section>
@@ -455,17 +510,40 @@
   </main>
 
   <script>
-    const PASSWORD = "ABC";          // change anytime
-    const REVEAL_HOUR = 18;          // 6 PM
-    const REVEAL_MINUTE = 30;        // :30
+    // =====================
+    // Settings
+    // =====================
+    const PASSWORD = "ABC";
 
-    const acceptBtn = document.getElementById("acceptBtn");
-    const declineBtn = document.getElementById("declineBtn");
+    // TRUE reveal time (secret): 6:15 PM local device time
+    const REVEAL_HOUR = 18;
+    const REVEAL_MINUTE = 15;
+
+    // Copy shown to guest says 6:30 PM (on purpose)
+    // =====================
+
+    const acceptBtn   = document.getElementById("acceptBtn");
+    const declineBtn  = document.getElementById("declineBtn");
+
     const inviteScreen = document.getElementById("inviteScreen");
-    const menuScreen = document.getElementById("menuScreen");
+    const codeScreen   = document.getElementById("codeScreen");
+    const menuScreen   = document.getElementById("menuScreen");
+
     const inviteInner = document.getElementById("inviteInner");
+
     const portal = document.getElementById("portal");
     const sparks = document.getElementById("sparks");
+
+    const codeInput = document.getElementById("codeInput");
+    const unlockBtn = document.getElementById("unlockBtn");
+    const backBtn   = document.getElementById("backBtn");
+    const codeError = document.getElementById("codeError");
+
+    function showScreen(screenEl){
+      [inviteScreen, codeScreen, menuScreen].forEach(s => s.classList.remove("active"));
+      screenEl.classList.add("active");
+      window.scrollTo(0,0);
+    }
 
     function isAfterRevealTime(now = new Date()){
       const reveal = new Date(now);
@@ -473,7 +551,7 @@
       return now >= reveal; // uses device local time
     }
 
-    function spawnSparks(count = 26) {
+    function spawnSparks(count = 28) {
       sparks.innerHTML = "";
       for (let i = 0; i < count; i++) {
         const s = document.createElement("div");
@@ -499,48 +577,66 @@
       acceptBtn.disabled = true;
       declineBtn.disabled = true;
 
-      // Fade invitation content
+      // Fade invitation content (if visible)
       inviteInner.classList.add("fadeOutFast");
 
-      // Start portal
+      // Start portal overlay
       spawnSparks(30);
       portal.classList.add("on");
 
-      // Swap screens timed to ringGrow (1200ms)
+      // Swap to menu after ring grows
       setTimeout(() => {
-        inviteScreen.classList.remove("active");
-        menuScreen.classList.add("active");
-
-        // Scroll to top (safe fallback for iOS)
-        try { window.scrollTo({ top: 0, behavior: "instant" }); }
-        catch(e){ window.scrollTo(0,0); }
+        showScreen(menuScreen);
 
         // Remove overlay shortly after menu appears
         setTimeout(() => {
           portal.classList.remove("on");
-
-          // Optional: keep buttons disabled so you can't re-trigger
-          // If you want re-trigger on refresh only, leave as-is.
         }, 420);
       }, 980);
     }
 
+    // =====================
+    // Behaviors
+    // =====================
     declineBtn.onclick = () => {
       alert("Sorry, you still have to accept this invitation.");
     };
 
     acceptBtn.onclick = () => {
-      // Gate BEFORE 6:30 PM local device time
-      if (!isAfterRevealTime()) {
-        const entered = prompt("This menu opens at 6:30 PM.\nEnter password to access early:");
-        if (entered !== PASSWORD) {
-          alert("Incorrect password. Please come back at 6:30 PM.");
-          return;
-        }
+      codeError.classList.remove("show");
+      codeInput.value = "";
+
+      // If time has passed (>= 6:15 PM), go straight to menu transition
+      if (isAfterRevealTime()) {
+        runTransitionToMenu();
+        return;
       }
 
-      runTransitionToMenu();
+      // Otherwise show dedicated code screen
+      showScreen(codeScreen);
+      setTimeout(() => codeInput.focus(), 80);
     };
+
+    backBtn.onclick = () => {
+      showScreen(inviteScreen);
+    };
+
+    function tryUnlock(){
+      const entered = (codeInput.value || "").trim();
+      if (entered === PASSWORD) {
+        codeError.classList.remove("show");
+        runTransitionToMenu();
+      } else {
+        codeError.classList.add("show");
+        codeInput.focus();
+        codeInput.select?.();
+      }
+    }
+
+    unlockBtn.onclick = tryUnlock;
+    codeInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") tryUnlock();
+    });
   </script>
 </body>
 </html>
